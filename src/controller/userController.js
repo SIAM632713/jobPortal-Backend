@@ -41,7 +41,7 @@ export const userLogin=async(req,res)=>{
             return res.status(400).send({message:"Invalid password"})
         }
         const token=await generateToken(user._id)
-        res.cookie("token",token,{httpOnly:true,secure:true,sameSite:'lax'})
+        res.cookie("token",token,{httpOnly:true,secure:true,sameSite:'None'})
         res.status(200).send({message:"Successfully logged in",token,user:{
             _id:user._id,
                 fullname:user.fullname,

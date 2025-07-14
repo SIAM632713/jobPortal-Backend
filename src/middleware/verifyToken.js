@@ -9,7 +9,7 @@ export const verifyToken = (req, res, next) => {
 
         const authHeader=req.headers.authorization;
         if(authHeader && authHeader.startsWith('Bearer ')){
-            token=authHeader.split('')[1];
+            token=authHeader.split(' ')[1];
         }
 
         if(!token && req.cookies.token){
