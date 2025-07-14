@@ -2,8 +2,8 @@ import jobModel from "../models/jobmodel.js";
 
 
 export const jobPosts=async(req,res)=>{
-    const {title,description,requirements,salary,location,jobType,position,companyID,createdBy}=req.body;
     try {
+        const {title,description,requirements,salary,location,jobType,position,companyID,createdBy}=req.body;
         const newPost=await jobModel({
             title,
             description,
@@ -64,11 +64,17 @@ export const getJobbyCategory=async(req,res)=>{
 
 export const getjobByFilter=async(req,res)=>{
     try {
-        const {title,location,minSalary,maxSalary}=req.query
+        const {keyword,title,location,minSalary,maxSalary}=req.query
         const filter={}
-        if(title && title!=="all"){
-            filter.title=title
+
+        if(keyword){
+            filter.title={$regex: keyword,$options:"i"};
         }
+
+        if(title && title!=="all"){
+            filter.title={$regex:title,$options:"i"};
+        }
+
         if(location && location!=="all"){
             filter.location=location
         }
