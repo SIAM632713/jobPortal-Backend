@@ -1,10 +1,19 @@
 import userModel from "../models/usermodel.js";
 import bcrypt from "bcryptjs";
 import {generateToken} from "../middleware/generateToken.js";
+import cloudinary from "../utilitis/cloudinary.js";
 
 export const userRegister=async(req,res)=>{
     try {
-        const {fullname,email,phone,password,role,profilePhoto}=req.body;
+        const {fullname,email,phone,password,role}=req.body;
+
+        let imageURL=""
+            if(req.file){
+                const result=await cloudinary.uploader.upload(req.file.path,{
+                    folder:"UserImage"
+                })
+                imageURL=result.secure_url;
+            }
 
         const user=await userModel.findOne({email})
         if(user){
@@ -19,7 +28,7 @@ export const userRegister=async(req,res)=>{
             phone,
             password:hashedPassword,
             role,
-            profilePhoto
+            profilePhoto:imageURL
         })
         await newUser.save()
         res.status(201).send({message:"Successfully registered"})
@@ -69,14 +78,22 @@ export const userLogout=async(req,res)=>{
 
 export const userUpdate=async(req,res)=>{
     const {id}=req.params;
-    const {fullname,phone,bio,skills,resume}=req.body;
+    const {fullname,phone,bio,skills}=req.body;
+    let imageURL=""
     try {
+        if(req.file){
+            const result=await cloudinary.uploader.upload(req.file.path,{
+                folder:"Resume",
+                resource_type: "auto",
+            })
+            imageURL=result.secure_url;
+        }
         const user=await userModel.findByIdAndUpdate(id,{
-            fullname:fullname,
-            phone:phone,
-            bio:bio,
-            resume:resume,
-            skills:skills
+            fullname,
+            phone,
+            bio,
+            resume:imageURL,
+            skills
         },{new:true})
         if(!user){
             return res.status(400).send({message:"User not found"})

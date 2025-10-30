@@ -1,14 +1,23 @@
 import companyModel from "../models/companyModel.js";
+import cloudinary from "../utilitis/cloudinary.js";
 
 export const registerCompany =async(req,res)=>{
-    const {name,description,website,location,logo,userId}=req.body;
+    const {name,description,website,location,userId}=req.body;
+    let imageURL=""
     try {
+        if(req.file){
+            const result=await cloudinary.uploader.upload(req.file.path,{
+                folder:"CompanyLogo"
+            })
+            imageURL=result.secure_url;
+        }
+
         const newCompany=await companyModel({
             name,
             description,
             website,
             location,
-            logo,
+            logo:imageURL,
             userId
         })
        await newCompany.save()
@@ -47,14 +56,22 @@ export const getCompanybyID=async(req,res)=>{
 
 export const updateCompany=async(req,res)=>{
     const {id} = req.params;
-    const {name,description,website,location,logo}=req.body;
+    const {name,description,website,location}=req.body;
+    let imageURL=""
     try {
+        if(req.file){
+            const result=await cloudinary.uploader.upload(req.file.path,{
+                folder:"CompanyLogo"
+            })
+            imageURL=result.secure_url;
+        }
+
         const data=await companyModel.findByIdAndUpdate(id,{
             name:name,
             description:description,
             website:website,
             location:location,
-            logo:logo
+            logo:imageURL
         })
         if(!data){
             return res.status(404).json({message:"No companyAPI found"})
