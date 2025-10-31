@@ -10,14 +10,12 @@ dotenv.config()
 
 const app = express()
 app.use(express.json())
-// app.use(cors({
-//     origin: ["http://localhost:5173","https://job-portal-six-brown.vercel.app"],
-//     credentials: true
-// }))
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173","https://job-portal-six-brown.vercel.app"],
     credentials: true
 }))
+
+
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
@@ -36,13 +34,11 @@ import userRoute from "./src/routes/userRoute.js"
 import companyRoute from "./src/routes/companyRoute.js"
 import jobRoute from "./src/routes/jobRoute.js"
 import applicationRoute from "./src/routes/applicationRoute.js";
-import uploadRoute from "./src/routes/uploadRoute.js"
 
 app.use("/api/user",userRoute)
 app.use("/api/company",companyRoute)
 app.use("/api/jobs",jobRoute)
 app.use("/api/application",applicationRoute)
-app.use("/api/upload",uploadRoute)
 
 
 
